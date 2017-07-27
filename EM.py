@@ -1,43 +1,17 @@
+'''
+Dimenssions convention
+Length: Angstrom
+Potential: volts
+Projected Potential: in e = 14.4 volts \times Angstrom
+'''
+
 import numpy as np
 from numpy.fft import *
 import matplotlib.pyplot as plt
-import Atoms
+import Specimen
 
 
-class Specimen:
-    def __init__(self, dimension = 50, pix_number = 512):
-        '''
-        dimension: side length of the specimen in unit Angstrom
-        pix_number: pixel number along one side
-        '''
-        self.dimension = dimension
-        self.pix_number = pix_number
-        self.x, self.y = np.mgrid[-dimension/2:dimension/2:pix_number*1j, 
-                        -dimension/2:dimension/2:pix_number*1j]
-        self.proj_pot = np.zeros_like(self.x)
-
-    def add_atoms(self):
-        # Linear superposition for atoms:
-        # self.proj_pot += np.sin(10*self.x+5*self.y)+np.sin(-10*self.x+5*self.y)
-        C = Atoms.Atom(6, pos = [0, -20, 0])
-        self.proj_pot += C.projected_potential(self.x, self.y).real
-        Si = Atoms.Atom(14, pos = [0, -10, 0])
-        self.proj_pot += Si.projected_potential(self.x, self.y).real
-        Cu = Atoms.Atom(29, pos = [0, 0, 0])
-        self.proj_pot += Cu.projected_potential(self.x, self.y).real
-        Au = Atoms.Atom(79, pos = [0, 10, 0])
-        self.proj_pot += Au.projected_potential(self.x, self.y).real
-        U = Atoms.Atom(92, pos = [0, 20, 0])
-        self.proj_pot += U.projected_potential(self.x, self.y).real
-
-    def trans_func(self):
-        return np.exp(1j*self.proj_pot)
-
-    def show(self, ax):
-        ax.imshow(self.proj_pot, cmap="gray_r")
-
-
-class EM:
+class EleMSCP:
     def __init__(self, Cs, df = 0, beam_energy = 200, aperture = np.pi/2):
 
         self.beam_energy = beam_energy # energy in keV
@@ -46,7 +20,7 @@ class EM:
         self.Cs = Cs # spherical aberration in mm 
         self.df = df # defocus in Angstrom
         self.aperture = aperture
-        self.specimen = Specimen()
+        self.specimen = None
 
     def aberration(self, k):
         # k = np.sqrt(kx*kx + ky*ky)
@@ -73,6 +47,13 @@ class EM:
         specimen: an instance of class Specimen
         '''
         self.specimen = specimen
+    def plot_CTF(self, ax):
+        kk = np.linspace(0, 0.6, 1000)
+        CTF = np.sin(self.aberration(kk))
+        ax.plot(kk, CTF)
+        ax.set_title("CTF")
+        ax.set_xlabel("1/Angstrom")
+
 
     def form_image(self):
         print("wave length = ", self.wave_len, "Angstrom")
@@ -95,25 +76,30 @@ class EM:
         img = abs(img_wave)**2
         return PSI, img
 
+    def show_image(self, img, ax):
+        ax.imshow(img, cmap="gray_r", interpolation="nearest")
+        ax.set_title("image")
+        ax.xaxis.set_visible(False)
+        ax.yaxis.set_visible(False)
+
     def Thon_rings(self, img):
         IMG = fftshift(fft2(img))
         return abs(IMG)
 
 
 
-
-
 if __name__=="__main__":
     fig, (ax1, ax2) = plt.subplots(ncols = 2)
     # set specimen
-    s = Specimen(dimension=50)
-    s.add_atoms()
-    s.show(ax1)
+    atoms_list = [[6,0,-20,0], [14,0,-10,0], [29,0,0,0], [79,0,10,0], [92,0,20,0]]
+    s = Specimen.SingleLayerAtoms(dimension=50, pix_number = 512)
+    s.add_atoms(atoms_list)
+    # s.show(ax1)
+
     # set EM
     beam_energy = 200
-
     Cs = 1.2 # mm
-    em = EM(Cs = Cs, beam_energy=200)
+    em = EleMSCP(Cs = Cs, beam_energy=200)
     # Scherzer condition
     df = np.sqrt(1.5*em.Cs*1e7*em.wave_len)
     a = pow(6*em.wave_len/(em.Cs*1e7),0.25)
@@ -126,23 +112,8 @@ if __name__=="__main__":
     PSI, img = em.form_image()
     Thon = em.Thon_rings(img)
 
-    # ax2.imshow(abs(PSI), cmap="gray_r",interpolation="nearest")
-    ax2.imshow(img, cmap="gray_r", interpolation="nearest")
-    # ax4.imshow(Thon, cmap="gray_r", interpolation="nearest")
-
-
-    ax1.set_title("proj_pot")
-    ax2.set_title("image")
-    # ax3.set_title("image")
-    # ax4.set_title("Thon rings")
-    ax1.xaxis.set_visible(False)
-    ax1.yaxis.set_visible(False)
-    ax2.xaxis.set_visible(False)
-    ax2.yaxis.set_visible(False)
-    # ax3.xaxis.set_visible(False)
-    # ax3.yaxis.set_visible(False)
-    # ax4.xaxis.set_visible(False)
-    # ax4.yaxis.set_visible(False)
+    em.show_image(img, ax2)
+    em.plot_CTF(ax1)
     plt.savefig("simulated_imgs/5atoms.png")
     plt.show()
 
