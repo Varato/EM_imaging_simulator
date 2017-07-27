@@ -41,7 +41,7 @@ class Atom:
     def plot_potential(self, ax):
         x,y = np.mgrid[-2:2:512j, -2:2:512j]
         proj_pot = self.projected_potential(x, y).real
-        ax.imshow(proj_pot, cmap="gray")
+        ax.imshow(proj_pot, cmap="gray_r")
 
 
 
