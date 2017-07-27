@@ -10,6 +10,7 @@ from numpy.fft import *
 import matplotlib.pyplot as plt
 import Specimen
 
+m0cq = 510.9989461 #keV
 
 class EleMSCP:
     def __init__(self, Cs, df = 0, beam_energy = 200, aperture = np.pi/2):
@@ -47,6 +48,12 @@ class EleMSCP:
         specimen: an instance of class Specimen
         '''
         self.specimen = specimen
+
+    def trans_func(self):
+        interact_pm = (14.39964/1975.9)*(m0cq + \
+            self.beam_energy)/np.sqrt(self.beam_energy*(2*m0cq + self.beam_energy)) # 1/e
+        return np.exp(1j*interact_pm*self.specimen.proj_pot)
+
     def plot_CTF(self, ax):
         kk = np.linspace(0, 0.6, 1000)
         CTF = np.sin(self.aberration(kk))
@@ -65,7 +72,7 @@ class EleMSCP:
         k = np.sqrt(kx*kx + ky*ky)
 
         # Fourier transforms the transmission function
-        t = self.specimen.trans_func() # origin at center
+        t = self.trans_func() # origin at center
         T = fftshift(fft2(t)) # origin at center
         # Contrast transfer function
         H = self.__MTF(k) # origin at center

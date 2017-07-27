@@ -11,8 +11,8 @@ beam_energy = 200
 Cs = 1.2 # mm
 em = EM.EleMSCP(Cs = Cs, beam_energy=200.)
 # Scherzer condition
-df = 700 #np.sqrt(1.5*em.Cs*1e7*em.wave_len)
-a = 0.01037 #pow(6*em.wave_len/(em.Cs*1e7),0.25)
+df = np.sqrt(1.5*em.Cs*1e7*em.wave_len)
+a = pow(6*em.wave_len/(em.Cs*1e7),0.25)
 print("Cs = ", Cs, "mm")
 print("aperture = ", a*1000, "mrad")
 print("defocus = ", df, "Angstrom")
@@ -33,8 +33,9 @@ em.plot_CTF(ax3)
 
 img_intensity = img[257]
 xxx = np.linspace(0, 50, 513)
-print(img_intensity.shape)
 ax4.plot(xxx, img_intensity)
+ax4.set_title("image intensity along centers of atoms")
+ax4.set_xlabel("Angstrom")
 
-plt.savefig("simulated_imgs/test.png")
+plt.savefig("simulated_imgs/5atoms.png")
 plt.show()
