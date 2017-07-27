@@ -82,7 +82,7 @@ class SingleLayerAtoms:
         ax.plot(np.linspace(0, self.dimension, self.pix_number), self.proj_pot[along])
         ax.set_title("proj_pot")
         ax.set_ylabel("Angstrom")
-        ax.set_ylabel("in unit e (14.4 volts$\times$Angstrom)")
+        ax.set_ylabel("in unit e (14.4 volts$\cdot$Angstrom)")
 
 
 
