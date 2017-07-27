@@ -76,45 +76,17 @@ class EleMSCP:
         img = abs(img_wave)**2
         return PSI, img
 
-    def show_image(self, img, ax):
-        ax.imshow(img, cmap="gray_r", interpolation="nearest")
+    def show_image(self, img,fig, ax):
+        img = ax.imshow(img, cmap="gray", interpolation="nearest")
         ax.set_title("image")
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
-
+        fig.colorbar(img, ax=ax)
     def Thon_rings(self, img):
         IMG = fftshift(fft2(img))
         return abs(IMG)
 
 
 
-if __name__=="__main__":
-    fig, (ax1, ax2) = plt.subplots(ncols = 2)
-    # set specimen
-    atoms_list = [[6,0,-20,0], [14,0,-10,0], [29,0,0,0], [79,0,10,0], [92,0,20,0]]
-    s = Specimen.SingleLayerAtoms(dimension=50, pix_number = 512)
-    s.add_atoms(atoms_list)
-    # s.show(ax1)
-
-    # set EM
-    beam_energy = 200
-    Cs = 1.2 # mm
-    em = EleMSCP(Cs = Cs, beam_energy=200)
-    # Scherzer condition
-    df = np.sqrt(1.5*em.Cs*1e7*em.wave_len)
-    a = pow(6*em.wave_len/(em.Cs*1e7),0.25)
-    print("Cs = ", Cs, "mm")
-    print("aperture = ", a*1000, "mrad")
-    print("defocus = ", df, "Angstrom")
-    em.set_defocuse(df)
-    em.set_aperture(a)
-    em.load_specimen(s)
-    PSI, img = em.form_image()
-    Thon = em.Thon_rings(img)
-
-    em.show_image(img, ax2)
-    em.plot_CTF(ax1)
-    plt.savefig("simulated_imgs/5atoms.png")
-    plt.show()
 
 
