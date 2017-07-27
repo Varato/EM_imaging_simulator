@@ -143,7 +143,7 @@ if __name__=="__main__":
     # ax3.yaxis.set_visible(False)
     # ax4.xaxis.set_visible(False)
     # ax4.yaxis.set_visible(False)
-    plt.savefig("5atoms.png")
+    plt.savefig("simulated_imgs/5atoms.png")
     plt.show()
 
 
