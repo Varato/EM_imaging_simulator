@@ -104,7 +104,7 @@ class EM:
 
 
 if __name__=="__main__":
-    fig, (ax1, ax2) = plt.subplots(2)
+    fig, (ax1, ax2) = plt.subplots(ncols = 2)
     # set specimen
     s = Specimen(dimension=50)
     s.add_atoms()
