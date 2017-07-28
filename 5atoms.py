@@ -1,5 +1,4 @@
 import numpy as np
-from numpy.fft import *
 import matplotlib.pyplot as plt
 import EMsims.EM as EM
 import EMsims.Specimen as Specimen
