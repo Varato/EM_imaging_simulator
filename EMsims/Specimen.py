@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 a0 = 0.529177 #Angstrom
 e = 14.39964 #volts Angstrom
-atom_pot_pms = np.loadtxt("atom_pot_pm.csv", delimiter=",")
+atom_pot_pms = np.loadtxt("external_data/atom_pot_pm.csv", delimiter=",")
 r_min = 1e-10
 
 

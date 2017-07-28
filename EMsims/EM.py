@@ -8,7 +8,6 @@ Projected Potential: in e = 14.4 volts \times Angstrom
 import numpy as np
 from numpy.fft import *
 import matplotlib.pyplot as plt
-import Specimen
 
 m0cq = 510.9989461 #keV
 

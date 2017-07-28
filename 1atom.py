@@ -1,8 +1,8 @@
 import numpy as np
 from numpy.fft import *
 import matplotlib.pyplot as plt
-import EM
-import Specimen
+import EMsims.EM as EM
+import EMsims.Specimen as Specimen
 
 
 fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2, figsize = [9,8])
