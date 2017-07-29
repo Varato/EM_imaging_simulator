@@ -63,8 +63,10 @@ class EleMSCP:
 
     def form_image(self):
         print("wave length = ", self.wave_len, "Angstrom")
-        Nx = Ny = self.specimen.pix_number
-        a = b = self.specimen.dimension
+        Nx = self.specimen.nx
+        Ny = self.specimen.ny
+        a = self.specimen.dx
+        b = self.specimen.dy
         ka = 0.5*Nx/a
         kb = 0.5*Ny/b
         kx, ky = np.mgrid[-ka:ka:Nx*1j, -kb:kb:Ny*1j]
@@ -82,8 +84,8 @@ class EleMSCP:
         img = abs(img_wave)**2
         return PSI, img
 
-    def show_image(self, img,fig, ax):
-        img = ax.imshow(img, cmap="gray", interpolation="nearest")
+    def show_image(self, img,fig, ax, cmap = "gray_r"):
+        img = ax.imshow(img, cmap = cmap, interpolation="nearest")
         ax.set_title("image")
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)

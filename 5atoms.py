@@ -20,9 +20,9 @@ em.set_aperture(a)
 
 # set specimen
 atoms_list = [[6,25,5,0], [14,25,15,0], [29,25,25,0], [79,25,35,0], [92,25,45,0]]
-s = Specimen.SingleLayerAtoms(dimension=50, pix_number = 513)
+s = Specimen.SingleLayerAtoms(dx = 50, dy = 50, nx = 513, ny = 513)
 s.add_atoms(atoms_list)
-s.plot_proj_pot(ax1, along = int(s.pix_number/2)+1)
+s.plot_projpot_horiz(ax1, along = int(s.nx/2)+1)
 em.load_specimen(s)
 PSI, img = em.form_image()
 Thon = em.Thon_rings(img)

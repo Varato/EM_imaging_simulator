@@ -53,14 +53,16 @@ class Atom:
 
 class SingleLayerAtoms:
 
-    def __init__(self, dimension = 50, pix_number = 512):
+    def __init__(self, dx, dy, nx, ny):
         '''
         dimension: side length of the specimen in unit Angstrom
-        pix_number: pixel number along one side
+        n_pix: pixel number along one side
         '''
-        self.dimension = dimension
-        self.pix_number = pix_number
-        self.x, self.y = np.mgrid[0:dimension:pix_number*1j, 0:dimension:pix_number*1j]
+        self.dx = dx
+        self.dy = dy
+        self.nx = nx
+        self.ny = ny
+        self.x, self.y = np.mgrid[0:dx:nx*1j, 0:dy:ny*1j]
         self.proj_pot = np.zeros_like(self.x)
 
     def add_atoms(self, atoms_list):
@@ -72,14 +74,20 @@ class SingleLayerAtoms:
             self.proj_pot += Atom(atom[0], pos = atom[1:]).projected_potential(self.x, self.y).real
 
 
-    def show(self, ax):
-        ax.imshow(self.proj_pot, cmap="gray_r")
+    def show(self, ax, cmap = "gray_r"):
+        ax.imshow(self.proj_pot, cmap = cmap)
         ax.set_title("proj_pot")
         ax.xaxis.set_visible(False)
         ax.yaxis.set_visible(False)
 
-    def plot_proj_pot(self, ax, along):
-        ax.plot(np.linspace(0, self.dimension, self.pix_number), self.proj_pot[along])
+    def plot_projpot_horiz(self, ax, along):
+        ax.plot(np.linspace(0, self.dx, self.nx), self.proj_pot[along])
+        ax.set_title("proj_pot")
+        ax.set_ylabel("Angstrom")
+        ax.set_ylabel("in unit e (14.4 volts$\cdot$Angstrom)")
+
+    def plot_projpot_vertic(self, ax, along):
+        ax.plot(np.linspace(0, self.dx, self.nx), self.proj_pot[along])
         ax.set_title("proj_pot")
         ax.set_ylabel("Angstrom")
         ax.set_ylabel("in unit e (14.4 volts$\cdot$Angstrom)")
